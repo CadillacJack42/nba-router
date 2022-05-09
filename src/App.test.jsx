@@ -15,4 +15,15 @@ describe('Should test router for Rick and Morty API', () => {
     userEvent.click(link);
     await screen.findByAltText(/image of rick sanchez/i);
   });
+
+  it('Should load a character detail page', async () => {
+    render(
+      <MemoryRouter initialEntries={['/character/420']}>
+        <App />
+      </MemoryRouter>
+    );
+    screen.debug();
+    await screen.findByText('Plutonian Host');
+    await screen.findByAltText(/image of plutonian host/i);
+  });
 });

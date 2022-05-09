@@ -1,15 +1,19 @@
-import { useLocation } from 'react-router-dom';
 import { useData } from '../hooks/useContext';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../App.css';
 
 export const Home = () => {
-  const location = useLocation();
   const useMe = useData();
 
   useEffect(() => {
-    if (useMe.page !== 1) {
+    console.log(useMe.page);
+    if (useMe.page === 1) {
+      fetch(`https://rickandmortyapi.com/api/character/?page=1`)
+        .then((response) => response.json())
+        .then((json) => useMe.setCharacters(json))
+        .catch((error) => console.error(error));
+    } else if (useMe.page > 1) {
       fetch(`https://rickandmortyapi.com/api/character/?page=${useMe.page - 1}`)
         .then((response) => response.json())
         .then((json) => useMe.setCharacters(json))

@@ -13,5 +13,13 @@ export const Detail = () => {
       .catch((error) => console.error(error));
   }, []);
 
-  return <h1>{useMe.characters.name}</h1>;
+  return (
+    <>
+      <h1>{useMe.characters.name}</h1>
+      <img
+        alt={`Image of ${useMe.characters.name}`}
+        src={`${useMe.characters.image}`}
+      ></img>
+    </>
+  );
 };

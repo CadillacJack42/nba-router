@@ -1,15 +1,16 @@
 import { useData } from '../hooks/useContext';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styles from '../App.css';
 
 export const Home = () => {
+  const history = useHistory();
   const useMe = useData();
 
   useEffect(() => {
     console.log(useMe.page);
     if (useMe.page === 1) {
-      fetch(`https://rickandmortyapi.com/api/character/?page=1`)
+      fetch('https://rickandmortyapi.com/api/character/?page=1')
         .then((response) => response.json())
         .then((json) => useMe.setCharacters(json))
         .catch((error) => console.error(error));
@@ -22,19 +23,21 @@ export const Home = () => {
   }, []);
 
   useEffect(() => {
-    const pageString = useMe.characters?.info?.next;
-    const stringSplit = pageString?.split('');
-    stringSplit && useMe.setPage(stringSplit[stringSplit.length - 1]);
-  }, [useMe.characters]);
+    fetch(
+      `https://rickandmortyapi.com/api/character/?page=${Number(useMe.page)}`
+    )
+      .then((response) => response.json())
+      .then((json) => useMe.setCharacters(json))
+      .catch((error) => console.error(error))
+      .finally(() => history.push(`/character?page=${Number(useMe.page)}`));
+  }, [useMe.page]);
 
   const handlePage = async (direction) => {
     let response;
     if (direction === 'forward') {
-      response = await fetch(useMe.characters.info.next);
-      useMe.setCharacters(await response.json());
+      await useMe.setPage((prevState) => Number(prevState) + 1);
     } else {
-      response = await fetch(useMe.characters.info.prev);
-      useMe.setCharacters(await response.json());
+      await useMe.setPage((prevState) => Number(prevState) - 1);
     }
   };
 
@@ -43,7 +46,7 @@ export const Home = () => {
       <h1>Rick And Morty Characters List</h1>
       <div className={styles['page-nav']}>
         <button onClick={() => handlePage('back')}>{'<'}</button>
-        <h4 className={styles['page-page']}>Page: {useMe.page - 1}</h4>
+        <h4 className={styles['page-page']}>Page: {Number(useMe.page)}</h4>
         <button onClick={() => handlePage('forward')}>{'>'}</button>
       </div>
 

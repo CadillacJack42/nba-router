@@ -1,4 +1,4 @@
-import { screen, render } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
@@ -13,7 +13,10 @@ describe('Should test router for Rick and Morty API', () => {
     screen.getByText(/Rick And Morty Characters List/i);
     const link = await screen.findByText(/Rick sanchez/i);
     userEvent.click(link);
-    await screen.findByAltText(/image of rick sanchez/i);
+    waitFor(() => {
+      const res = screen.getByAltText(/image of rick sanchez/i);
+      expect(res).toBeInTheDocument();
+    });
   });
 
   it('Should load a character detail page', async () => {

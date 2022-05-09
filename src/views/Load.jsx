@@ -13,5 +13,5 @@ export const Load = () => {
         console.error(error);
       });
   }, []);
-  return <Redirect to="/character" />;
+  return <Redirect to="/character?page=1" />;
 };

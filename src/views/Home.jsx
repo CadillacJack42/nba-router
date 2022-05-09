@@ -1,32 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useData } from '../hooks/useContext';
-import { fetchData } from '../services/fetchData';
-// import { Paginate } from '../services/switchPage';
-import styles from '../App.css';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import styles from '../App.css';
 
 export const Home = () => {
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
   const useMe = useData();
 
   useEffect(() => {
-    fetchData()
-      .then((data) => useMe.setCharacters(data))
-      .then(setLoading(false))
-      .catch((error) => {
-        console.error(error);
-      });
+    if (useMe.page !== 1) {
+      fetch(`https://rickandmortyapi.com/api/character/?page=${useMe.page - 1}`)
+        .then((response) => response.json())
+        .then((json) => useMe.setCharacters(json))
+        .catch((error) => console.error(error));
+    }
   }, []);
 
   useEffect(() => {
     const pageString = useMe.characters?.info?.next;
     const stringSplit = pageString?.split('');
     stringSplit && useMe.setPage(stringSplit[stringSplit.length - 1]);
-  }, [loading, useMe.characters]);
+  }, [useMe.characters]);
 
   const handlePage = async (direction) => {
     let response;
-    // await Paginate(direction);
     if (direction === 'forward') {
       response = await fetch(useMe.characters.info.next);
       useMe.setCharacters(await response.json());

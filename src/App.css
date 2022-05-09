@@ -1,0 +1,9 @@
+.page-nav {
+    display: flex;
+    flex-direction: row;
+}
+
+.page-page {
+    margin: 5px;
+    width: fit-content;
+}
